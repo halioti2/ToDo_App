@@ -78,7 +78,10 @@ function renderTask(task) {
     taskElement.innerHTML = `
         <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
         <span class="task-text ${task.completed ? 'completed' : ''}">${task.text}</span>
-        <button class="delete-task">×</button>
+        <div class="task-actions">
+            <button class="edit-task">Edit</button>
+            <button class="delete-task">×</button>
+        </div>
     `;
 
     const checkbox = taskElement.querySelector('.task-checkbox');
@@ -87,7 +90,59 @@ function renderTask(task) {
     const deleteButton = taskElement.querySelector('.delete-task');
     deleteButton.addEventListener('click', () => deleteTask(task.id));
 
+    const editButton = taskElement.querySelector('.edit-task');
+    editButton.addEventListener('click', () => startEditing(taskElement, task));
+
     taskList.appendChild(taskElement);
+}
+
+function startEditing(taskElement, task) {
+    const taskText = taskElement.querySelector('.task-text');
+    const currentText = taskText.textContent;
+    
+    // Create edit input
+    const editInput = document.createElement('input');
+    editInput.type = 'text';
+    editInput.className = 'edit-input';
+    editInput.value = currentText;
+    
+    // Replace text with input
+    taskText.replaceWith(editInput);
+    editInput.focus();
+    
+    // Handle save on enter
+    editInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            saveEdit(taskElement, task, editInput);
+        }
+    });
+    
+    // Handle save on blur (clicking outside)
+    editInput.addEventListener('blur', () => {
+        saveEdit(taskElement, task, editInput);
+    });
+}
+
+function saveEdit(taskElement, task, editInput) {
+    const newText = editInput.value.trim();
+    if (newText && newText !== task.text) {
+        task.text = newText;
+        saveTasks();
+        
+        // Create new text span
+        const newTextSpan = document.createElement('span');
+        newTextSpan.className = `task-text ${task.completed ? 'completed' : ''}`;
+        newTextSpan.textContent = newText;
+        
+        // Replace input with new text
+        editInput.replaceWith(newTextSpan);
+    } else {
+        // If no changes or empty, revert to original text
+        const newTextSpan = document.createElement('span');
+        newTextSpan.className = `task-text ${task.completed ? 'completed' : ''}`;
+        newTextSpan.textContent = task.text;
+        editInput.replaceWith(newTextSpan);
+    }
 }
 
 function loadTasks() {

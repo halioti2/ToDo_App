@@ -98,6 +98,30 @@ button:hover {
     flex: 1;
 }
 
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.edit-task {
+    background-color: #2ecc71;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.edit-task:hover {
+    background-color: #27ae60;
+}
+
+.edit-input {
+    flex: 1;
+    padding: 0.25rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+}
+
 .completed {
     text-decoration: line-through;
     color: #888;
